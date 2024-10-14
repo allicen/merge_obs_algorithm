@@ -1,4 +1,4 @@
-#include "GeneratePointCloud.hpp"
+#include "generate_point_cloud.hpp"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -28,7 +28,9 @@ GeneratePointCloud::GeneratePointCloud(std::string obstacles_name, double delta_
     delta_resolution = delta_resolution_;
     resolution = delta_resolution_ * 2;
     save_file = save_file_;
-    path = path_;
+
+    char* var_value = std::getenv("HOME_USER");
+    path = std::string("/home/") + std::string(var_value) + path_;
 
     if(obstacles_name == "table") generateTable();
     if(obstacles_name == "box") generateBox();

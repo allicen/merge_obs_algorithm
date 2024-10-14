@@ -17,9 +17,9 @@
 #include <pcl_ros/publisher.h>
 #include <pcl/io/ply_io.h>
 
-#include "BoxMerge.hpp"
-#include "ColorInfo.hpp"
-#include "GeneratePointCloud.hpp"
+#include "box_merge.hpp"
+#include "color_info.hpp"
+#include "generate_point_cloud.hpp"
 
 namespace custom_geometry
 {

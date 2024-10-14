@@ -17,8 +17,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
-#include <octomap/octomap.h>
-
 #include <memory>
 #include <iostream>
 #include <vector>
@@ -63,9 +61,9 @@ class GeneratePointCloud {
       // Save to a file .ply
       bool save_file = true;
 
-      // Path to the folder to save the file
-      // by default, saving to a folder /home/trajopt/files
-      std::string path;
+      // Path to the folder to save the files in folder "/home"
+      // Default folder name: "merge_obs_algorithm_code"
+      std::string path = "merge_obs_algorithm_code";
 
 };
 }

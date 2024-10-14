@@ -1,7 +1,7 @@
 #include "octomap.hpp"
-#include "BoxMerge.hpp"
-#include "ColorInfo.hpp"
-#include "GeneratePointCloud.hpp"
+#include "box_merge.hpp"
+#include "color_info.hpp"
+#include "generate_point_cloud.hpp"
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -24,6 +24,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cstddef>
+#include <cstring>
 
 using namespace custom_geometry;
 
@@ -77,6 +79,7 @@ static bool compare(Item &a, Item &b, std::string axis) {
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
+
 Octomap::Octomap(double delta_resolution_, pcl::PointCloud<pcl::PointXYZ> full_cloud_, Eigen::Vector3d position_) {
     resolution = delta_resolution_ * 2;
     delta_resolution = delta_resolution_;
@@ -105,6 +108,7 @@ Octomap::Octomap(double delta_resolution_,
     }
 }
 
+
 int Octomap::getIndexItem(std::vector<Item> coords, Item item) {
     int index = -1;
 
@@ -126,12 +130,7 @@ Item Octomap::getMinValue(std::vector<Item> coords) {
     Item item(10000, 10000, 10000);
 
     for (int i = 0; i < coords.size(); i++) {
-        // if (coords[i].x < item.x || 
-        //     coords[i].x == item.x && coords[i].y < item.y || 
-        //     coords[i].x == item.x && coords[i].y == item.y && coords[i].z < item.z) {
-
         if ((coords[i].x + coords[i].y + coords[i].z) <= (item.x + item.y + item.z)) {
-            
             item = coords[i];
         }
     }
@@ -141,12 +140,9 @@ Item Octomap::getMinValue(std::vector<Item> coords) {
 
 
 ColorInfo Octomap::generateColor() {
-    // Генерация цвета
     double r = ((double)rand()) / RAND_MAX;
     double g = ((double)rand()) / RAND_MAX;
     double b = ((double)rand()) / RAND_MAX;
-
-    // std::cout << "R = " << r << ", G = " << g << ", B = " << b << std::endl;
 
     ColorInfo color("", r, g, b, 1);
 
@@ -188,11 +184,8 @@ std::vector<BoxMerge> Octomap::createOctomap(std::string axis) {
         coords.push_back(item);
     }
 
-    // Sorting by coordinates to merge
+    // TODO: Sorting by coordinates to merge
     // std::sort(coords.begin(), coords.end(), boost::bind(compare, _1, _2, axis));
-
-
-    std::cout << "SIZE = " << coords.size() << std::endl;
 
     int step = 0;
 
@@ -207,9 +200,7 @@ std::vector<BoxMerge> Octomap::createOctomap(std::string axis) {
     double x_tmp = a.x, y_tmp = a.y, z_tmp = a.z;
 
     const char *axises = axis.data();
-
-    // std::cout << cstr[0] << " == " << cstr[1] << " == " << cstr[2] << std::endl;
-    // std::cout << (cstr[0] == 'x') << " == " << (cstr[0] == 'y') << std::endl;
+    size_t axises_size = strlen(axises);
 
     while (coords.size() > 0) {
 
@@ -217,32 +208,93 @@ std::vector<BoxMerge> Octomap::createOctomap(std::string axis) {
 
         step++;
 
-        // merging by x
         int x_count = 0;
         int y_count = 0;
-        while (true) {
-            
-            Item item(x_tmp, y_tmp, z_tmp);
-            // item.print();
-            int index = getIndexItem(coords, item);
+        int z_count = 0;
 
-            if (index > -1) {
-                item_tmp = item;
-                x_count++;
-                found_box = true;
 
-            } else {
-                x_tmp = a.x;
-                y_tmp += resolution;
-                break;
+        // merging by 1 axis
+        if (axises_size >= 1) {
+
+            // by X
+            if (axises[0] == 'x') {
+
+                while (true) {
+                    
+                    Item item(x_tmp, y_tmp, z_tmp);
+                    // item.print();
+                    int index = getIndexItem(coords, item);
+
+                    if (index > -1) {
+                        item_tmp = item;
+                        x_count++;
+                        found_box = true;
+
+                    } else {
+                        x_tmp = a.x;
+                        y_tmp += resolution;
+                        break;
+                    }
+
+                    x_tmp += resolution;
+                }
+
+            // by Y
+            } else if (axises[0] == 'y') {
+
+                int y_count = 0;
+                int z_count = 0;
+
+                while (true) {
+                    
+                    Item item(x_tmp, y_tmp, z_tmp);
+                    int index = getIndexItem(coords, item);
+
+                    if (index > -1) {
+                        item_tmp = item;
+                        y_count++;
+                        found_box = true;
+
+                    } else {
+                        y_tmp = a.y;
+                        z_tmp += resolution;
+                        break;
+                    }
+
+                    y_tmp += resolution;
+                }
+
+            // by Z
+            } else if (axises[0] == 'z') {
+                int y_count = 0;
+                int z_count = 0;
+
+                while (true) {
+                    
+                    Item item(x_tmp, y_tmp, z_tmp);
+                    int index = getIndexItem(coords, item);
+
+                    if (index > -1) {
+                        item_tmp = item;
+                        z_count++;
+                        found_box = true;
+
+                    } else {
+                        z_tmp = a.z;
+                        y_tmp += resolution;
+                        break;
+                    }
+
+                    z_tmp += resolution;
+                }
             }
-
-            x_tmp += resolution;
         }
 
 
+
         // merging by y
-        if (found_box) {
+        // TODO add merge by X, Z
+        if (found_box && axises_size >= 2) {
             y_count = 1; // y min 1
 
             while (true) {
@@ -285,7 +337,8 @@ std::vector<BoxMerge> Octomap::createOctomap(std::string axis) {
 
 
         // merging by z
-        if (found_box) {
+        // TODO add merge by X, Y
+        if (found_box  && axises_size >= 3) {
             while (true) {
                 std::vector<int> ids;
                 Item item_tmp_(0, 0, 0);

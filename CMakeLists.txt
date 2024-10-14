@@ -5,6 +5,11 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
   std_srvs
   sensor_msgs
+  moveit_core 
+  moveit_msgs
+  moveit_ros_planning 
+  moveit_ros_planning_interface 
+  moveit_visual_tools
   std_msgs
   octomap_msgs
   octomap_ros
@@ -31,7 +36,8 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/octomap.cpp
-  src/GeneratePointCloud.cpp
+  src/generate_point_cloud.cpp
+  examples/example.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

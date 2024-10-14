@@ -4,9 +4,9 @@
   <version>0.0.0</version>
   <description>The settings package</description>
 
-  <maintainer email="root@todo.todo">root</maintainer>
-
-  <license>TODO</license>
+  <maintainer email="elena@erubleva.ru">Elena Rubleva</maintainer>
+  <license>Apache 2.0</license>
+  <author>Elena Rubleva</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
@@ -34,7 +34,10 @@
   <exec_depend>octomap_ros</exec_depend>
   <exec_depend>octomap_msgs</exec_depend>
 
-  <depend>roslib</depend>
-
+  <depend>moveit_msgs</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning</depend>
+  <depend>moveit_visual_tools</depend>
 
 </package>
