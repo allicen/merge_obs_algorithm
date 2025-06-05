@@ -37,6 +37,7 @@ GeneratePointCloud::GeneratePointCloud(std::string obstacles_name, double delta_
     if(obstacles_name == "chair") generateChair();
     if(obstacles_name == "wall") generateWall();
     if(obstacles_name == "cabinet") generateCabinet();
+    if(obstacles_name == "floor") generateFloor();
 
     if (save_file) {
         std::string file_path = path + "/" + obstacles_name + ".ply";
@@ -215,6 +216,32 @@ void GeneratePointCloud::generateCabinet() {
                     static_cast<float>(z * delta)));
 
                 }
+            }
+        }
+    }
+}
+
+
+
+void GeneratePointCloud::generateFloor() {
+    double delta = delta_resolution; // side of the cube =* 2
+
+    auto length_ = 10.0; // length
+    auto height_ = 0.1; // height
+    auto width_ = 10.0; // width
+
+    auto length = static_cast<int>(length_ / delta);
+    auto height = static_cast<int>(height_ / delta);
+    auto width = static_cast<int>(width_ / delta);
+
+    for (int x = 0; x < length; ++x) {
+        for (int y = 0; y < width; ++y) {
+            for (int z = 0; z < height; ++z) {
+                point_cloud.push_back(pcl::PointXYZ(
+                    static_cast<float>(x * delta),
+                    static_cast<float>(y * delta),
+                    static_cast<float>(z * delta))
+                );
             }
         }
     }

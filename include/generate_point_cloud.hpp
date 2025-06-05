@@ -52,6 +52,9 @@ class GeneratePointCloud {
     // Generate a cabinet
     void generateCabinet();
 
+    // Generate a floor
+    void generateFloor();
+
     pcl::PointCloud<pcl::PointXYZ> point_cloud;
 
     private:
