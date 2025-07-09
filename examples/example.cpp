@@ -75,7 +75,7 @@ void pointCloudFilter(pcl::PointCloud<pcl::PointXYZ> &full_cloud) {
 
 custom_geometry::Octomap getOctomap() {
     if (generate) {
-        custom_geometry::Octomap octomap(delta_resolution, octomap_position, scene_obstacle_generate, name_obs, scene_save_ply, scene_save_path);
+        custom_geometry::Octomap octomap(delta_resolution, octomap_position, scene_obstacle_generate, name_obs, scene_save_ply, scene_save_path, true);
         return octomap;
     }
 

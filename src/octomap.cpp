@@ -93,7 +93,8 @@ Octomap::Octomap(double delta_resolution_,
                  bool generate_,
                  std::string obstacles_name,
                  bool scene_save_ply_, 
-                 std::string scene_save_path_) {
+                 std::string scene_save_path_,
+                 bool octomap_merge_box_ = true) {
     
     resolution = delta_resolution_ * 2;
     delta_resolution = delta_resolution_;
@@ -101,6 +102,7 @@ Octomap::Octomap(double delta_resolution_,
     generate = generate_;
     scene_save_ply = scene_save_ply_;
     scene_save_path = scene_save_path_;
+    octomap_merge_box = octomap_merge_box_;
 
     if (generate) {
         GeneratePointCloud cloud(obstacles_name, delta_resolution, scene_save_ply, scene_save_path);
@@ -190,6 +192,25 @@ std::vector<BoxMerge> Octomap::createOctomap(std::string axis) {
     int step = 0;
 
     if (coords.size() == 0) {
+        return boxes;
+    }
+
+    // return as octomap
+    if (!octomap_merge_box) {
+        for (const auto& point : coords) {
+            ot->updateNode(point.x, point.y, point.z, true, true);
+
+            double length = resolution;
+            double width = resolution;
+            double height = resolution;
+            
+            BoxMerge box(length, width, height, point.x, point.y, point.z);
+            boxes.push_back(box);
+        }
+
+        ot->updateInnerOccupancy();
+        ot->toMaxLikelihood();
+
         return boxes;
     }
 

@@ -43,7 +43,7 @@ public:
 class Octomap
 {
 public:
-  Octomap(double, Eigen::Vector3d, bool, std::string, bool, std::string);
+  Octomap(double, Eigen::Vector3d, bool, std::string, bool, std::string, bool);
   Octomap(double, pcl::PointCloud<pcl::PointXYZ>, Eigen::Vector3d);
   ~Octomap() = default;
   Octomap(const Octomap&) = default;
@@ -65,6 +65,7 @@ private:
     bool generate = false;
     bool scene_save_ply = false;
     std::string scene_save_path = "";
+    bool octomap_merge_box = true;
 };
 
 }  // namespace custom_geometry
